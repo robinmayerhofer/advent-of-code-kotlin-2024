@@ -1,3 +1,8 @@
+package days.day01
+
+import utils.println
+import utils.readInput
+
 fun main() {
     fun part1(input: List<String>): Int {
         return input.size
