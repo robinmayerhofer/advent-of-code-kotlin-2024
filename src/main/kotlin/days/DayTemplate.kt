@@ -23,7 +23,7 @@ fun main() {
         2,
         filterBlank = false,
     )
-    val input = readInput("Day24").filter(String::isNotBlank)
+    val input = readInput("Day01").filter(String::isNotBlank)
     part1(input).println()
 
 //    testFile(

@@ -20,5 +20,5 @@ mkdir "$new_dir"
 cp $template_file $new_file
 # Replace all instances of day01 with day$day, and Day01 with Day$day
 sed -i '' "s|package days|package days.day$day|g" "$new_file"
-sed -i '' "s|day01|day02|g" "$new_file"
-sed -i '' "s|Day01|Day02|g" "$new_file"
+sed -i '' "s|day01|day$day|g" "$new_file"
+sed -i '' "s|Day01|Day$day|g" "$new_file"
