@@ -1,18 +1,20 @@
 package days.day03
 
-import utils.println
-import utils.readInput
-import utils.shouldLog
-import utils.testFile
+import command.CommandFactory
+import command.CommandInterpreter
+import utils.*
+
 
 fun main() {
     shouldLog = true
 
     fun part1(input: List<String>): Int =
-        input.size
+        CommandFactory.parse(input)
+            .let { CommandInterpreter(it).execute() }
 
     fun part2(input: List<String>): Int =
-        input.size
+        CommandFactory.parse(input)
+            .let { CommandInterpreter(it).execute() }
 
     testFile(
         "Part 1 Test 1",
@@ -20,19 +22,19 @@ fun main() {
         {
             part1(it)
         },
-        2,
+        161,
         filterBlank = false,
     )
-    val input = readInput("Day03").filter(String::isNotBlank)
+    val input = readInput("Day03")
     part1(input).println()
 
-//    testFile(
-//        "Part 2 Test 1",
-//        "Day03_test",
-//        ::part2,
-//        1,
-//        filterBlank = false,
-//    )
-//    val input2 = readInput("Day03").filter(String::isNotBlank)
-//    part2(input2).println()
+    testFile(
+        "Part 2 Test 1",
+        "Day03_test2",
+        ::part2,
+        48,
+        filterBlank = false,
+    )
+    val input2 = readInput("Day03").filter(String::isNotBlank)
+    part2(input2).println()
 }
