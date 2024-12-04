@@ -1,12 +1,23 @@
 package utils
 
-data class Position(val column: Int, val row: Int)
+data class Position(val column: Int, val row: Int) : Comparable<Position> {
+    override fun compareTo(other: Position): Int =
+        compareValuesBy(
+            this, other,
+            { it.column },
+            { it.row },
+        )
+}
 
 enum class Direction(val deltaX: Int, val deltaY: Int) {
     NORTH(deltaX = 0, deltaY = -1),
     SOUTH(deltaX = 0, deltaY = 1),
     EAST(deltaX = 1, deltaY = 0),
     WEST(deltaX = -1, deltaY = 0),
+    DIAGONAL1FORWARD(deltaX = 1, deltaY = 1),
+    DIAGONAL1BACKWARD(deltaX = -1, deltaY = -1),
+    DIAGONAL2FORWARD(deltaX = -1, deltaY = 1),
+    DIAGONAL2BACKWARD(deltaX = 1, deltaY = -1),
     ;
 
     fun reverse() = when (this) {
@@ -14,6 +25,7 @@ enum class Direction(val deltaX: Int, val deltaY: Int) {
         SOUTH -> NORTH
         EAST -> WEST
         WEST -> EAST
+        else -> TODO()
     }
 }
 

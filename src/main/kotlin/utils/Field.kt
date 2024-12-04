@@ -29,6 +29,14 @@ fun Field.isValidPosition(position: Position): Boolean =
 operator fun Field.get(position: Position) =
     this[position.row][position.column]
 
+fun Field.getSafe(position: Position) =
+    if (isValidPosition(position)) {
+        this[position.row][position.column]
+    } else {
+        null
+    }
+
+
 fun Field.get(row: Int, column: Int) =
     this[row][column]
 
@@ -41,6 +49,19 @@ fun Field.find(matches: (Char) -> Boolean): Position {
         }
     }
     error("Not found.")
+}
+
+
+fun Field.findAll(matches: (Char) -> Boolean): List<Position> {
+    val all = mutableListOf<Position>()
+    for (r in indices) {
+        for (c in this[r].indices) {
+            if (matches(get(row = r, column = c))) {
+                all.add(Position(column = c, row = r))
+            }
+        }
+    }
+   return all
 }
 
 operator fun Field.set(position: Position, newValue: Char) {
