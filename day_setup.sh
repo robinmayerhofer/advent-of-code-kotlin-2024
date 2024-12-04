@@ -22,3 +22,7 @@ cp $template_file $new_file
 sed -i '' "s|package days|package days.day$day|g" "$new_file"
 sed -i '' "s|day01|day$day|g" "$new_file"
 sed -i '' "s|Day01|Day$day|g" "$new_file"
+touch "src/Day$day.txt"
+touch "src/Day$day\_2.txt"
+touch "src/Day$day\_test.txt"
+touch "src/Day$day\_test2.txt"
