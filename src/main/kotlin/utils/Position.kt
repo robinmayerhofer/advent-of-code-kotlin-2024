@@ -10,30 +10,62 @@ data class Position(val column: Int, val row: Int) : Comparable<Position> {
 }
 
 enum class Direction(val deltaX: Int, val deltaY: Int) {
-    NORTH(deltaX = 0, deltaY = -1),
-    SOUTH(deltaX = 0, deltaY = 1),
-    EAST(deltaX = 1, deltaY = 0),
-    WEST(deltaX = -1, deltaY = 0),
-    DIAGONAL1FORWARD(deltaX = 1, deltaY = 1),
-    DIAGONAL1BACKWARD(deltaX = -1, deltaY = -1),
-    DIAGONAL2FORWARD(deltaX = -1, deltaY = 1),
-    DIAGONAL2BACKWARD(deltaX = 1, deltaY = -1),
+    UP(deltaX = 0, deltaY = -1),
+    DOWN(deltaX = 0, deltaY = 1),
+    RIGHT(deltaX = 1, deltaY = 0),
+    LEFT(deltaX = -1, deltaY = 0),
+    DOWN_RIGHT(deltaX = 1, deltaY = 1),
+    UP_LEFT(deltaX = -1, deltaY = -1),
+    DOWN_LEFT(deltaX = -1, deltaY = 1),
+    UP_RIGHT(deltaX = 1, deltaY = -1),
     ;
 
+    companion object {
+        val NORTH = UP
+        val SOUTH = DOWN
+        val EAST = RIGHT
+        val WEST = LEFT
+        val DIAGONAL1FORWARD = DOWN_RIGHT
+        val DIAGONAL1BACKWARD = UP_LEFT
+        val DIAGONAL2FORWARD = DOWN_LEFT
+        val DIAGONAL2BACKWARD = UP_RIGHT
+    }
+
     fun reverse() = when (this) {
-        NORTH -> SOUTH
-        SOUTH -> NORTH
-        EAST -> WEST
-        WEST -> EAST
-        else -> TODO()
+        UP -> DOWN
+        DOWN -> UP
+        RIGHT -> LEFT
+        LEFT -> RIGHT
+
+        DOWN_RIGHT -> UP_LEFT
+        UP_LEFT -> DOWN_RIGHT
+
+        DOWN_LEFT -> UP_RIGHT
+        UP_RIGHT -> DOWN_LEFT
     }
 
     fun turnRight() = when (this) {
-        NORTH -> EAST
-        EAST -> SOUTH
-        SOUTH -> WEST
-        WEST -> NORTH
-        else -> TODO()
+        UP -> RIGHT
+        RIGHT -> DOWN
+        DOWN -> LEFT
+        LEFT -> UP
+
+        DOWN_RIGHT -> DOWN_LEFT
+        DOWN_LEFT -> UP_LEFT
+        UP_LEFT -> UP_RIGHT
+        UP_RIGHT -> DOWN_RIGHT
+    }
+
+    fun turnLeft() = when (this) {
+        UP -> LEFT
+        LEFT -> DOWN
+        DOWN -> RIGHT
+        RIGHT -> UP
+
+        DOWN_RIGHT -> UP_RIGHT
+        UP_RIGHT -> UP_LEFT
+        UP_LEFT -> DOWN_LEFT
+        DOWN_LEFT -> DOWN_RIGHT
     }
 }
 

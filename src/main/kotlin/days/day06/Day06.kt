@@ -21,7 +21,7 @@ fun main() {
         val field = inputToField(input)
 
         var currPos = field.find { it == '^' }
-        var direction = Direction.NORTH
+        var direction = Direction.UP
         val visited = mutableSetOf<Pair<Position, Direction>>()
 
         while (true) {
@@ -44,7 +44,7 @@ fun main() {
 
     fun getsStuckInLoop(field: Field, modifiedPosition: Position): Boolean {
         var currPos = field.find { it == '^' }
-        var direction = Direction.NORTH
+        var direction = Direction.UP
         val visited = mutableSetOf<Pair<Position, Direction>>()
 
         while (true) {

@@ -2,6 +2,7 @@ package days.day04
 
 import utils.*
 import utils.Direction.*
+import utils.Direction.Companion.DIAGONAL1BACKWARD
 
 fun main() {
     shouldLog = true
@@ -40,11 +41,11 @@ fun main() {
 
         return startPositions.sumOf { pos ->
             listOf(
-                DIAGONAL1FORWARD to (DIAGONAL2FORWARD to EAST),
-                DIAGONAL1FORWARD to (DIAGONAL2BACKWARD to SOUTH),
+                DOWN_RIGHT to (DOWN_LEFT to RIGHT),
+                DOWN_RIGHT to (UP_RIGHT to DOWN),
 
-                DIAGONAL1BACKWARD to (DIAGONAL2FORWARD to NORTH),
-                DIAGONAL1BACKWARD to (DIAGONAL2BACKWARD to WEST),
+                UP_LEFT to (DOWN_LEFT to UP),
+                UP_LEFT to (UP_RIGHT to LEFT),
             ).count { input ->
                 val dir1 = input.first
                 val dir2 = input.second.first
