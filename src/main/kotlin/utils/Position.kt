@@ -27,6 +27,14 @@ enum class Direction(val deltaX: Int, val deltaY: Int) {
         WEST -> EAST
         else -> TODO()
     }
+
+    fun turnRight() = when (this) {
+        NORTH -> EAST
+        EAST -> SOUTH
+        SOUTH -> WEST
+        WEST -> NORTH
+        else -> TODO()
+    }
 }
 
 fun Position.travel(direction: Direction, steps: Int = 1): Position =
