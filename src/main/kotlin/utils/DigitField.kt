@@ -30,6 +30,18 @@ fun DigitField.set(row: Int, column: Int, newValue: Int) {
     this[row][column] = newValue
 }
 
+fun DigitField.findAll(matches: (Int) -> Boolean): List<Position> {
+    val all = mutableListOf<Position>()
+    for (r in indices) {
+        for (c in this[r].indices) {
+            if (matches(get(row = r, column = c))) {
+                all.add(Position(column = c, row = r))
+            }
+        }
+    }
+    return all
+}
+
 fun DigitField.isValidPosition(position: Position): Boolean =
     if (position.column < 0 || position.row < 0) {
         false
