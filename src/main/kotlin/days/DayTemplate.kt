@@ -1,5 +1,6 @@
 package days
 
+import utils.measure
 import utils.println
 import utils.readInput
 import utils.shouldLog
@@ -25,9 +26,12 @@ fun main() {
         filterBlank = false,
     )
 
-    shouldLog = true
-    val input = readInput("Day01").filter(String::isNotBlank)
-    part1(input).println()
+    shouldLog = false
+    println("Solving part 1")
+    measure {
+        val input = readInput("Day01").filter(String::isNotBlank)
+        part1(input)
+    }.println()
 
 //    shouldLog = true
 //    testFile(
@@ -37,7 +41,10 @@ fun main() {
 //        1,
 //        filterBlank = false,
 //    )
-//    shouldLog = true
-//    val input2 = readInput("Day01").filter(String::isNotBlank)
-//    part2(input2).println()
+//    shouldLog = false
+//    println("Solving part 2")
+//    measure {
+//        val input = readInput("Day01").filter(String::isNotBlank)
+//        part2(input)
+//    }.println()
 }
