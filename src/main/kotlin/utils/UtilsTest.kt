@@ -7,6 +7,7 @@ fun <T> testFile(
     expectedValue: T,
     filterBlank: Boolean = true
 ) = measure {
+    println("Executing $testName")
     val testInput = readInput(fileName)
         .let {
             if (filterBlank) {

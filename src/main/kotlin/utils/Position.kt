@@ -1,5 +1,10 @@
 package utils
 
+import utils.Direction.DOWN
+import utils.Direction.LEFT
+import utils.Direction.RIGHT
+import utils.Direction.UP
+
 data class Position(val column: Int, val row: Int) : Comparable<Position> {
     override fun compareTo(other: Position): Int =
         compareValuesBy(
@@ -8,6 +13,82 @@ data class Position(val column: Int, val row: Int) : Comparable<Position> {
             { it.row },
         )
 }
+
+fun Set<Position>.area() = size
+
+fun areaOf(positions: Set<Position>) = positions.area()
+
+fun Set<Position>.perimeter(): Int {
+    var per = 0
+    for (position in this) {
+        if (position.travel(UP) !in this) per += 1
+        if (position.travel(DOWN) !in this) per += 1
+        if (position.travel(LEFT) !in this) per += 1
+        if (position.travel(RIGHT) !in this) per += 1
+    }
+    return per
+}
+
+fun perimiterOf(positions: Set<Position>) = positions.perimeter()
+
+fun Position.travelLeft() = travel(LEFT)
+fun Position.travelRight() = travel(RIGHT)
+fun Position.travelUp() = travel(UP)
+fun Position.travelDown() = travel(DOWN)
+
+fun Set<Position>.edges(): Int {
+    val rMax = this.maxOf { it.row }
+    val rMin = this.minOf { it.row }
+    val cMax = this.maxOf { it.column }
+    val cMin = this.minOf { it.column }
+
+    var edgeCount = 0
+
+    fun checkEdge(pos: Position, travelFunc: (Position) -> Position, onEdge: Boolean): Boolean {
+        return if (travelFunc(pos) !in this) {
+            if (!onEdge) {
+                edgeCount += 1
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    for (c in cMin..cMax) {
+        var onEdgeLeft = false
+        var onEdgeRight = false
+        for (r in rMin..rMax) {
+            val pos = Position(column = c, row = r)
+            if (pos in this) {
+                onEdgeLeft = checkEdge(pos, Position::travelLeft, onEdgeLeft)
+                onEdgeRight = checkEdge(pos, Position::travelRight, onEdgeRight)
+            } else {
+                onEdgeLeft = false
+                onEdgeRight = false
+            }
+        }
+    }
+
+    for (r in rMin..rMax) {
+        var onEdgeUp = false
+        var onEdgeDown = false
+        for (c in cMin..cMax) {
+            val pos = Position(column = c, row = r)
+            if (pos in this) {
+                onEdgeUp = checkEdge(pos, Position::travelUp, onEdgeUp)
+                onEdgeDown = checkEdge(pos, Position::travelDown, onEdgeDown)
+            } else {
+                onEdgeUp = false
+                onEdgeDown = false
+            }
+        }
+    }
+
+    return edgeCount
+}
+
+fun edgesOf(positions: Set<Position>) = positions.edges()
 
 enum class Direction(val deltaX: Int, val deltaY: Int) {
     UP(deltaX = 0, deltaY = -1),

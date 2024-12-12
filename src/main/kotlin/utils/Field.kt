@@ -1,5 +1,10 @@
 package utils
 
+import utils.Direction.DOWN
+import utils.Direction.LEFT
+import utils.Direction.RIGHT
+import utils.Direction.UP
+
 typealias Field = Array<CharArray>
 
 fun inputToField(input: List<String>): Field {
@@ -51,7 +56,6 @@ fun Field.find(matches: (Char) -> Boolean): Position {
     error("Not found.")
 }
 
-
 fun Field.findAll(matches: (Char) -> Boolean): List<Position> {
     val all = mutableListOf<Position>()
     for (r in indices) {
@@ -71,7 +75,6 @@ operator fun Field.set(position: Position, newValue: Char) {
 fun Field.set(row: Int, column: Int, newValue: Char) {
     this[row][column] = newValue
 }
-
 
 /**
  * 1 2 3    1 4 7
@@ -131,3 +134,26 @@ fun Field.deepCopy(): Field =
 fun Field.println() {
     println(this.joinToString("\n") { it.joinToString("") })
 }
+
+fun Field.floodFill(position: Position, found: MutableSet<Position>, char: Char): Set<Position> {
+    if (!isValidPosition(position)) {
+        return found
+    }
+    if (position in found) {
+        return found
+    }
+    if (get(position) != char) {
+        return found
+    }
+
+    found.add(position)
+
+    floodFill(position.travel(UP), found, char)
+    floodFill(position.travel(DOWN), found, char)
+    floodFill(position.travel(LEFT), found, char)
+    floodFill(position.travel(RIGHT), found, char)
+
+    return found
+}
+
+fun Field.floodFill(position: Position) = floodFill(position, mutableSetOf(), get(position))
