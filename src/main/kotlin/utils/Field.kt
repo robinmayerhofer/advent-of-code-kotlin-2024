@@ -7,6 +7,8 @@ import utils.Direction.UP
 
 typealias Field = Array<CharArray>
 
+fun Field.debugPrint() = joinToString(separator = "\n") { it.joinToString("") }.println()
+
 fun inputToField(input: List<String>): Field {
     val rows = input.size
     val columns = input.firstOrNull()?.length ?: 0
