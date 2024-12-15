@@ -1,5 +1,11 @@
 package days
 
+import client.Day
+import client.Download
+import client.Download.downloadInput
+import client.Part
+import client.Submit.submit
+import client.Year
 import utils.measure
 import utils.println
 import utils.readInput
@@ -8,6 +14,9 @@ import utils.testFile
 
 fun main() {
     shouldLog = true
+    val day = Day(1)
+    val year = Year(2024)
+    downloadInput(day, year)
 
     fun part1(input: List<String>): Int =
         input.size
@@ -31,7 +40,11 @@ fun main() {
     measure {
         val input = readInput("Day01").filter(String::isNotBlank)
         part1(input)
-    }.println()
+    }
+        .also {
+            submit(it, day, year, Part(1))
+        }
+        .println()
 
 //    shouldLog = true
 //    testFile(
@@ -46,5 +59,9 @@ fun main() {
 //    measure {
 //        val input = readInput("Day01").filter(String::isNotBlank)
 //        part2(input)
-//    }.println()
+//    }
+//        .also {
+//            submit(it, day, year, Part(2))
+//        }
+//        .println()
 }
