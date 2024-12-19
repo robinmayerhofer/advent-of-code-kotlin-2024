@@ -16,7 +16,7 @@ private val dayOfMonth: Int by lazy {
 }
 
 object Download {
-    fun downloadInput(day: Day, year: Year = Year(2024)): String {
+    private fun fetchInput(day: Day, year: Year): String {
         val availableAt = ZonedDateTime.of(year.value, 12, day.value, 0, 0, 0, 0, ZoneId.of("US/Eastern"))
         val now = ZonedDateTime.now()
         val timeToWait: Duration = if (availableAt < now) {
@@ -35,15 +35,19 @@ object Download {
         val response = Client.shared.sendInputDownloadRequest(day = day, year = year)
         return response.body()
     }
+
+    fun downloadInput(day: Day, year: Year = Year(2024)) {
+        val target = Path("src/Day${dayOfMonth.twoDigitString()}.txt")
+        if (target.exists() && target.readBytes().isNotEmpty()) {
+            println("Skipping download - already exists and has data.")
+            return
+        }
+        target.writeText(
+            fetchInput(day = Day(dayOfMonth), year = year).also { println("Input:\n$it") }
+        )
+    }
 }
 
 fun main() {
-    val target = Path("src/Day${dayOfMonth.twoDigitString()}.txt")
-    if (target.exists() && target.readBytes().isNotEmpty()) {
-        println("Skipping download - already exists and has data.")
-        return
-    }
-    target.writeText(
-        Download.downloadInput(day = Day(dayOfMonth)).also { println("Input:\n$it") }
-    )
+    Download.downloadInput(day = Day(dayOfMonth))
 }

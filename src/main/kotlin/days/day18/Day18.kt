@@ -35,8 +35,6 @@ fun main() {
             cost - other.cost
     }
 
-    fun DigitField.debugPrint() = joinToString(separator = "\n") { it.joinToString("") { if (it == 0) "." else "#" } }.println()
-
     fun findShortestPath(start: Position, end: Position, f: DigitField): Int? {
         val q = PriorityQueue<Vertex>()
         q.add(Vertex(start, 0))
@@ -137,8 +135,8 @@ fun main() {
         val input = readInput("Day18").filter(String::isNotBlank)
         part2(input, xs = 0..70, ys = 0..70)
     }
-//        .also {
-//            submit(it, day, year, Part(2))
-//        }
+        .also {
+            submit(it, day, year, Part(2))
+        }
         .println()
 }

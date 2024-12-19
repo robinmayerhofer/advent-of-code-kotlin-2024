@@ -17,20 +17,20 @@ import kotlin.io.path.readLines
 object Submit {
 
     private data class Submission(
-        val value: Long,
+        val value: String,
         val result: SubmissionResult,
     ) {
         companion object {
             fun parse(string: String): Submission {
-                val parts = string.split(",")
+                val parts = string.split(",", limit = 2)
                 return Submission(
-                    value = parts[0].toLong(),
-                    result = SubmissionResult.valueOf(parts[1])
+                    result = SubmissionResult.valueOf(parts[0]),
+                    value = parts[1],
                 )
             }
         }
 
-        fun serialize(): String = "$value,${result.name}"
+        fun serialize(): String = "${result.name},$value"
     }
 
     enum class SubmissionResult {
@@ -59,11 +59,13 @@ object Submit {
         }
     }
 
-    fun submit(value: Int, day: Day, year: Year = Year(2024), part: Part) {
-        submit(value.toLong(), day, year, part)
-    }
+    fun submit(value: Int, day: Day, year: Year = Year(2024), part: Part) =
+        submit(value.toString(), day, year, part)
 
-    fun submit(value: Long, day: Day, year: Year = Year(2024), part: Part) {
+    fun submit(value: Long, day: Day, year: Year = Year(2024), part: Part) =
+        submit(value.toString(), day, year, part)
+
+    fun submit(value: String, day: Day, year: Year = Year(2024), part: Part) {
         println("Submitting $value")
         val submissions = getSubmissionsUntilNow(day, year, part)
 

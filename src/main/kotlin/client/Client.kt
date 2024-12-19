@@ -45,7 +45,7 @@ class Client private constructor(
             }
     }
 
-    fun sendSubmitRequest(value: Long, day: Day, year: Year = Year(2024), part: Part): HttpResponse<String> {
+    fun sendSubmitRequest(value: String, day: Day, year: Year = Year(2024), part: Part): HttpResponse<String> {
         val request = HttpRequest.newBuilder()
             .uri(URI("https://adventofcode.com/$year/day/$day/answer"))
             .header("User-Agent", userAgent)
