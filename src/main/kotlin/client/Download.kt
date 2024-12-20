@@ -37,13 +37,13 @@ object Download {
     }
 
     fun downloadInput(day: Day, year: Year = Year(2024)) {
-        val target = Path("src/Day${dayOfMonth.twoDigitString()}.txt")
+        val target = Path("src/Day${day.value.twoDigitString()}.txt")
         if (target.exists() && target.readBytes().isNotEmpty()) {
             println("Skipping download - already exists and has data.")
             return
         }
         target.writeText(
-            fetchInput(day = Day(dayOfMonth), year = year).also { println("Input:\n$it") }
+            fetchInput(day = day, year = year).also { println("Input:\n$it") }
         )
     }
 }

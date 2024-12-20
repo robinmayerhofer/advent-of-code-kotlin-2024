@@ -1,79 +1,48 @@
 package days.day20
 
-import client.Day
-import client.Download.downloadInput
-import client.Part
-import client.Submit.submit
-import client.Year
 import utils.Direction
 import utils.Field
 import utils.Position
 import utils.find
 import utils.get
+import utils.inputToDigitField
 import utils.inputToField
 import utils.isValidPosition
 import utils.measure
 import utils.println
 import utils.readInput
 import utils.shouldLog
-import utils.testFile
 import utils.travel
-import java.util.PriorityQueue
 import kotlin.math.abs
 
 fun main() {
     shouldLog = true
-    val day = Day(20)
-    val year = Year(2024)
-    downloadInput(day, year)
+//    val day = Day(20)
+//    val year = Year(2024)
+//    downloadInput(day, year)
 
-    class Vertex(
-        val pos: Position,
-        val cost: Int,
-        val tunnelStart: Position? = null,
-        val tunnelEnd: Position? = null,
-        val prev: Vertex?,
-    ) : Comparable<Vertex> {
-        override fun compareTo(other: Vertex): Int =
-            cost - other.cost
-
-        override fun toString(): String {
-            return "Vertex(pos=$pos, cost=$cost, tunnelStart=$tunnelStart, tunnelEnd=$tunnelEnd)"
+    fun findShortestPath(start: Position, end: Position, f: Field): Pair<Array<Position>, Int> {
+        val path = arrayOfNulls<Position>(10_000)
+        var i = 0
+        var prev: Position? = null
+        var curr = start
+        path[i++] = start
+        while (curr != end) {
+            var dir = Direction.UP
+            while (true) {
+                val target = curr.travel(dir)
+                if (
+                    f.isValidPosition(target) && f[target] != '#' && (prev != target)
+                ) {
+                    path[i++] = target
+                    prev = curr
+                    curr = target
+                    break
+                }
+                dir = dir.turnRight()
+            }
         }
-    }
-
-    fun extractPath(vertex: Vertex): List<Position> = buildList {
-        var v: Vertex? = vertex
-        while (v != null) {
-            add(v.pos)
-            v = v.prev
-        }
-    }.reversed()
-
-    fun findShortestPath(start: Position, end: Position, f: Field): List<Position> {
-        val q = PriorityQueue<Vertex>()
-        q.add(Vertex(start, 0, prev = null))
-
-        val dist = mutableMapOf<Position, Int>()
-
-        while (q.isNotEmpty()) {
-            val v = q.poll()
-            if (dist[v.pos] != null) continue
-            if (v.pos == end) return extractPath(v)
-            dist[v.pos] = v.cost
-            q.addAll(
-                listOf(
-                    Vertex(v.pos.travel(Direction.UP), v.cost + 1, prev = v),
-                    Vertex(v.pos.travel(Direction.DOWN), v.cost + 1, prev = v),
-                    Vertex(v.pos.travel(Direction.LEFT), v.cost + 1, prev = v),
-                    Vertex(v.pos.travel(Direction.RIGHT), v.cost + 1, prev = v),
-                )
-                    .filter { f.isValidPosition(it.pos) }
-                    .filter { f[it.pos] != '#' }
-                    .filter { dist[it.pos] == null }
-            )
-        }
-        error("Not found")
+        return path as Array<Position> to i
     }
 
 //    fun shorterPathsWithTunneling(
@@ -109,55 +78,56 @@ fun main() {
 
     fun Position.distanceTo(other: Position) = abs(row - other.row) + abs(column - other.column)
 
-    fun <K, V> Map<K, V>.countValues(): Map<V, Int> {
-        val valueCount = mutableMapOf<V, Int>()
-        for (value in values) {
-            valueCount[value] = valueCount.getOrDefault(value, 0) + 1
-        }
-        return valueCount
-    }
-
-    fun <K, V> Map<K, V>.inverseMap(): Map<V, List<K>> {
-        val inversedMap = mutableMapOf<V, MutableList<K>>()
-        for ((key, value) in this) {
-            inversedMap.computeIfAbsent(value) { mutableListOf() }.add(key)
-        }
-        return inversedMap
-    }
+//    fun <K, V> Map<K, V>.countValues(): Map<V, Int> {
+//        val valueCount = mutableMapOf<V, Int>()
+//        for (value in values) {
+//            valueCount[value] = valueCount.getOrDefault(value, 0) + 1
+//        }
+//        return valueCount
+//    }
+//
+//    fun <K, V> Map<K, V>.inverseMap(): Map<V, List<K>> {
+//        val inversedMap = mutableMapOf<V, MutableList<K>>()
+//        for ((key, value) in this) {
+//            inversedMap.computeIfAbsent(value) { mutableListOf() }.add(key)
+//        }
+//        return inversedMap
+//    }
 
     fun shorterPathsWithInsaneTunneling(
-        path: List<Position>,
+        path: Array<Position>,
+        pathSize: Int,
         minSkip: Int,
+        maxTunnel: Int,
     ): Int {
         var amount = 0
 
-        for (startI in path.indices) {
+        for (startI in 0 until pathSize) {
             val start = path[startI]
-            for (endI in (startI + minSkip) until path.size) {
+            for (endI in (startI + minSkip) until pathSize) {
                 val end = path[endI]
                 val positionsAdvanced = (endI - startI)
                 val distance = start.distanceTo(end)
                 val skipped = positionsAdvanced - distance
-                if (distance <= 20 && skipped >= minSkip) amount++
+                if (distance <= maxTunnel && skipped >= minSkip) amount++
             }
         }
 
         return amount
     }
 
-    fun part2(input: List<String>, minDiff: Int): Int {
+    fun part2(input: List<String>, minDiff: Int, maxTunnel: Int = 20): Int {
         val f = inputToField(input)
         val start = f.find { it == 'S' }
         val end = f.find { it == 'E' }
 
-        val shortestPath = findShortestPath(start, end, f)
-
-        val shortestPathCost = shortestPath.size - 1
-        println("shortestPathCost: $shortestPathCost")
+        val (path, pathSize) = findShortestPath(start, end, f)
 
         return shorterPathsWithInsaneTunneling(
-            path = shortestPath,
+            path = path,
             minSkip = minDiff,
+            maxTunnel = maxTunnel,
+            pathSize = pathSize
         )
     }
 
@@ -199,8 +169,8 @@ fun main() {
         val input = readInput("Day20")
         part2(input, minDiff = 100)
     }
-        .also {
-            submit(it, day, year, Part(2))
-        }
+//        .also {
+//            submit(it, day, year, Part(2))
+//        }
         .println()
 }
