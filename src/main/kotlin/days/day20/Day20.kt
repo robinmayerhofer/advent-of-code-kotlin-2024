@@ -5,7 +5,6 @@ import client.Download.downloadInput
 import client.Part
 import client.Submit.submit
 import client.Year
-import days.day01.part1
 import utils.Direction
 import utils.Field
 import utils.Position
@@ -20,6 +19,7 @@ import utils.shouldLog
 import utils.testFile
 import utils.travel
 import java.util.PriorityQueue
+import kotlin.math.abs
 
 fun main() {
     shouldLog = true
@@ -33,27 +33,24 @@ fun main() {
         val tunnelStart: Position? = null,
         val tunnelEnd: Position? = null,
         val prev: Vertex?,
-    ): Comparable<Vertex> {
+    ) : Comparable<Vertex> {
         override fun compareTo(other: Vertex): Int =
             cost - other.cost
-
-        val isTunnelStart by lazy { pos == tunnelStart }
-        val isTunnelEnd by lazy { pos == tunnelEnd }
 
         override fun toString(): String {
             return "Vertex(pos=$pos, cost=$cost, tunnelStart=$tunnelStart, tunnelEnd=$tunnelEnd)"
         }
     }
 
-    fun extractPath(vertex: Vertex): List<Vertex> = buildList<Vertex> {
+    fun extractPath(vertex: Vertex): List<Position> = buildList {
         var v: Vertex? = vertex
         while (v != null) {
-            add(v)
+            add(v.pos)
             v = v.prev
         }
     }.reversed()
 
-    fun findShortestPath(start: Position, end: Position, f: Field): List<Vertex> {
+    fun findShortestPath(start: Position, end: Position, f: Field): List<Position> {
         val q = PriorityQueue<Vertex>()
         q.add(Vertex(start, 0, prev = null))
 
@@ -79,36 +76,38 @@ fun main() {
         error("Not found")
     }
 
-    fun shorterPathsWithTunneling(
-        f: Field,
-        path: Map<Position, Int>,
-        minSkip: Int,
-    ): Int {
-        val possibleTunnels: Sequence<Pair<Position, Position>> = sequence {
-            path.keys.asSequence().forEach { start ->
-                listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).forEach { dir ->
-                    val middle = start.travel(dir)
-                    if (f[middle] == '#') {
-                        listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).forEach { dir ->
-                            val end = middle.travel(dir)
-                            if (f.isValidPosition(end) && f[end] != '#') {
-                                yield(start to end)
-                            }
-                        }
-                    }
+//    fun shorterPathsWithTunneling(
+//        f: Field,
+//        path: Map<Position, Int>,
+//        minSkip: Int,
+//    ): Int {
+//        val possibleTunnels: Sequence<Pair<Position, Position>> = sequence {
+//            path.keys.asSequence().forEach { start ->
+//                listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).forEach { dir ->
+//                    val middle = start.travel(dir)
+//                    if (f[middle] == '#') {
+//                        listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT).forEach { dir ->
+//                            val end = middle.travel(dir)
+//                            if (f.isValidPosition(end) && f[end] != '#') {
+//                                yield(start to end)
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//
+//        return possibleTunnels.count { (start, end) ->
+//            val tunnelStartPosition = path[start]!!
+//            val tunnelEndPosition = path[end]!!
+//            val skipped = tunnelEndPosition - tunnelStartPosition - 2
+//            println("$tunnelStartPosition to $tunnelEndPosition skips $skipped")
+//            skipped >= minSkip
+//        }
+//    }
 
-                }
-            }
-        }
-
-        return possibleTunnels.count { (start, end) ->
-            val tunnelStartPosition = path[start]!!
-            val tunnelEndPosition = path[end]!!
-            val skipped = tunnelEndPosition - tunnelStartPosition - 2
-            println("$tunnelStartPosition to $tunnelEndPosition skips $skipped")
-            skipped >= minSkip
-        }
-    }
+    fun Position.distanceTo(other: Position) = abs(row - other.row) + abs(column - other.column)
 
     fun <K, V> Map<K, V>.countValues(): Map<V, Int> {
         val valueCount = mutableMapOf<V, Int>()
@@ -118,63 +117,90 @@ fun main() {
         return valueCount
     }
 
-    fun part1(input: List<String>, minDiff: Int): Int {
+    fun <K, V> Map<K, V>.inverseMap(): Map<V, List<K>> {
+        val inversedMap = mutableMapOf<V, MutableList<K>>()
+        for ((key, value) in this) {
+            inversedMap.computeIfAbsent(value) { mutableListOf() }.add(key)
+        }
+        return inversedMap
+    }
+
+    fun shorterPathsWithInsaneTunneling(
+        path: List<Position>,
+        minSkip: Int,
+    ): Int {
+        var amount = 0
+
+        for (startI in path.indices) {
+            val start = path[startI]
+            for (endI in (startI + minSkip) until path.size) {
+                val end = path[endI]
+                val positionsAdvanced = (endI - startI)
+                val distance = start.distanceTo(end)
+                val skipped = positionsAdvanced - distance
+                if (distance <= 20 && skipped >= minSkip) amount++
+            }
+        }
+
+        return amount
+    }
+
+    fun part2(input: List<String>, minDiff: Int): Int {
         val f = inputToField(input)
         val start = f.find { it == 'S' }
         val end = f.find { it == 'E' }
 
-        val shortestPathPositions = findShortestPath(start, end, f)
-            .mapIndexed { index, vertex -> vertex.pos to index }
-            .toMap()
+        val shortestPath = findShortestPath(start, end, f)
 
-        val shortestPathCost = shortestPathPositions.size - 1
+        val shortestPathCost = shortestPath.size - 1
         println("shortestPathCost: $shortestPathCost")
 
-        return shorterPathsWithTunneling(
-            f = f,
-            path = shortestPathPositions,
+        return shorterPathsWithInsaneTunneling(
+            path = shortestPath,
             minSkip = minDiff,
         )
     }
 
-    shouldLog = true
-    testFile(
-        "Part 1 Test 1",
-        "Day20_test",
-        {
-            part1(it, minDiff = 1)
-        },
-        44,
-        filterBlank = false,
-    )
-
-    shouldLog = false
-    println("Solving part 1")
-    measure {
-        val input = readInput("Day20")
-        part1(input, minDiff = 100)
-    }
-        .also {
-            submit(it, day, year, Part(1))
-        }
-        .println()
+//    shouldLog = true
+//    testFile(
+//        "Part 1 Test 1",
+//        "Day20_test",
+//        {
+//            part1(it, minDiff = 1)
+//        },
+//        44,
+//        filterBlank = false,
+//    )
+//
+//    shouldLog = false
+//    println("Solving part 1")
+//    measure {
+//        val input = readInput("Day20")
+//        part1(input, minDiff = 100)
+//    }
+//        .also {
+//            submit(it, day, year, Part(1))
+//        }
+//        .println()
 
 //    shouldLog = true
 //    testFile(
 //        "Part 2 Test 1",
 //        "Day20_test",
-//        ::part2,
-//        1,
+//        {
+//            part2(it, minDiff = 50)
+//        },
+//        285,
 //        filterBlank = false,
 //    )
-//    shouldLog = false
-//    println("Solving part 2")
-//    measure {
-//        val input = readInput("Day20")
-//        part2(input)
-//    }
-//        .also {
-//            submit(it, day, year, Part(2))
-//        }
-//        .println()
+    shouldLog = false
+    println("Solving part 2")
+    measure {
+        val input = readInput("Day20")
+        part2(input, minDiff = 100)
+    }
+        .also {
+            submit(it, day, year, Part(2))
+        }
+        .println()
 }
