@@ -6,6 +6,17 @@ import utils.Direction.RIGHT
 import utils.Direction.UP
 
 data class Position(val column: Int, val row: Int) : Comparable<Position> {
+
+    companion object {
+        fun of(y: Int, x: Int) = Position(column = y, row = x)
+    }
+
+    val x
+        get() = column
+
+    val y
+        get() = row
+
     override fun compareTo(other: Position): Int =
         compareValuesBy(
             this, other,

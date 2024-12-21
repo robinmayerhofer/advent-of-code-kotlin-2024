@@ -39,7 +39,7 @@ object Submit {
         INCORRECT_TOO_LOW,
         INCORRECT_TOO_HIGH,
         CORRECT,
-        WRONG_PART; // submitting part 2 but part 1 not done yet
+        WRONG_PART; // submitting part 2 but part 1 not done yet, or submitting although already correct
 
         companion object {
             fun parse(response: String): SubmissionResult =
@@ -53,6 +53,7 @@ object Submit {
                     }
 
                     "You gave an answer too recently" in response -> WAIT
+                    "You don't seem to be solving the right level." in response -> WRONG_PART
                     else -> CORRECT
                 }
 
