@@ -55,7 +55,7 @@ tasks {
         dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources")) // We need this for Gradle optimization to work
         archiveClassifier.set("standalone") // Naming the jar
         manifest {
-            attributes("Main-Class" to "days.day16speed.Day16Speed")
+            attributes("Main-Class" to "days.day22speed.Day22Speed")
         }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val sourcesMain = sourceSets.main.get()
