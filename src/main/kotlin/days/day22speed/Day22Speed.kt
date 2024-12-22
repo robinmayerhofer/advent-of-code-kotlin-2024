@@ -5,6 +5,7 @@ import kotlin.io.path.readLines
 
 object Day22Speed {
 
+    @JvmStatic
     private fun Long.next(): Long {
         val step1 = prune(mix(this, this * 64))
         val step2 = prune(mix(step1, step1 / 32))
@@ -12,12 +13,14 @@ object Day22Speed {
         return step3
     }
 
+    @JvmStatic
     private fun mix(a: Long, b: Long) = a xor b
 
+    @JvmStatic
     private fun prune(a: Long) = a % 16777216
 
     @JvmStatic
-    fun part2(input: List<String>): Int {
+    private fun part2(input: List<String>): Int {
         val numberss = Array(input.size) { IntArray(2001) }
         val diffs = Array(input.size) { IntArray(2000) }
 
