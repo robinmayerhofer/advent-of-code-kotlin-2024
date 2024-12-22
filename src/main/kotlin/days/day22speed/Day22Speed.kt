@@ -1,6 +1,5 @@
 package days.day22speed
 
-import utils.measure
 import kotlin.io.path.Path
 import kotlin.io.path.readLines
 
@@ -35,7 +34,7 @@ object Day22Speed {
                 numberss[i][j] = (current % 10).toInt()
                 current = current.next()
                 if (j >= 1) {
-                    diffs[i][j-1] = numberss[i][j] - numberss[i][j - 1]
+                    diffs[i][j - 1] = numberss[i][j] - numberss[i][j - 1]
                 }
             }
         }
@@ -68,9 +67,7 @@ object Day22Speed {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        measure {
-            val input = Path(args[0]).readLines()
-            print(part2(input))
-        }
+        val input = Path(args[0]).readLines()
+        print(part2(input))
     }
 }
