@@ -2,14 +2,15 @@ package days.day22speed
 
 import kotlin.io.path.Path
 import kotlin.io.path.readLines
+import kotlin.math.max
 
 object Day22Speed {
 
     @JvmStatic
     private fun Long.next(): Long {
-        val step1 = prune(mix(this, this * 64))
-        val step2 = prune(mix(step1, step1 / 32))
-        val step3 = prune(mix(step2, step2 * 2048))
+        val step1 = prune(mix(this, this shl 6))
+        val step2 = prune(mix(step1, step1 shr 5))
+        val step3 = prune(mix(step2, step2 shl 11))
         return step3
     }
 
@@ -25,6 +26,12 @@ object Day22Speed {
         val numberss = IntArray(size * 2001)
         val diffs = IntArray(size * 2000)
 
+        val final = IntArray(130321)
+        var ans = Int.MIN_VALUE
+
+        val indices = IntArray(1997)
+        val cur = IntArray(130321)
+
         for (i in input.indices) {
             val initial = input[i].toLong()
             var current = initial
@@ -35,28 +42,21 @@ object Day22Speed {
                     diffs[i * 2000 + j - 1] = numberss[i * 2001 + j] - numberss[i * 2001 + j - 1]
                 }
             }
-        }
 
-        val final = IntArray(130321)
-        var ans = 0
-        val factor = 6859
-
-        val cur = IntArray(130321)
-        for (i in input.indices) {
-            cur.fill(0)
             for (j in 1996 downTo 0) {
                 val diff1 = diffs[i * 2000 + j] + 9
                 val diff2 = diffs[i * 2000 + j + 1] + 9
                 val diff3 = diffs[i * 2000 + j + 2] + 9
                 val diff4 = diffs[i * 2000 + j + 3] + 9
-                val index = diff1 * factor + diff2 * 361 + diff3 * 19 + diff4
+                val index = diff1 * 6859 + diff2 * 361 + diff3 * 19 + diff4
                 cur[index] = numberss[i * 2001 + j + 4]
+                indices[j] = index
             }
-            for (index in cur.indices) {
+
+            for (index in indices) {
                 final[index] += cur[index]
-                if (i == size - 1) {
-                    ans = maxOf(ans, final[index])
-                }
+                cur[index] = 0
+                ans = max(ans, final[index])
             }
         }
 
