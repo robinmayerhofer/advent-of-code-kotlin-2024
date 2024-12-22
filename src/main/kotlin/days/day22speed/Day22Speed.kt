@@ -34,9 +34,8 @@ object Day22Speed {
             for (j in 0 until secretCount) {
                 numberss[i][j] = (current % 10).toInt()
                 current = current.next()
-
-                if (j > 1) {
-                    diffs[i][j - 1] = numberss[i][j] - numberss[i][j - 1]
+                if (j >= 1) {
+                    diffs[i][j-1] = numberss[i][j] - numberss[i][j - 1]
                 }
             }
         }
@@ -54,7 +53,7 @@ object Day22Speed {
                 val diff3 = diffs[i][j + 2] + 9
                 val diff4 = diffs[i][j + 3] + 9
                 val index = diff1 * factor + diff2 * 19 * 19 + diff3 * 19 + diff4
-                cur[index] = numberss[i][j + 4]
+                cur[index] = (numberss[i][j + 4] % 10).toInt()
             }
             for (index in cur.indices) {
                 final[index] += cur[index]
