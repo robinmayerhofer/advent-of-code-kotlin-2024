@@ -100,6 +100,10 @@ object Submit {
         if (result != CORRECT) {
             error("$result")
         }
+        if (day == Day(25) && part == Part(1)) {
+            // autosubmit part 2 of day 25
+            submit(value = 0, day, year, Part(2))
+        }
     }
 
     private fun submissionFile(day: Day, year: Year, part: Part): Path =
