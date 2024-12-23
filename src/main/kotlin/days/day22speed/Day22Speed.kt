@@ -6,19 +6,16 @@ import kotlin.math.max
 
 object Day22Speed {
 
-    @JvmStatic
-    private fun Long.next(): Long {
+    private inline fun Long.next(): Long {
         val step1 = prune(mix(this, this shl 6))
         val step2 = prune(mix(step1, step1 shr 5))
         val step3 = prune(mix(step2, step2 shl 11))
         return step3
     }
 
-    @JvmStatic
-    private fun mix(a: Long, b: Long) = a xor b
+    private inline fun mix(a: Long, b: Long) = a xor b
 
-    @JvmStatic
-    private fun prune(a: Long) = a and 0xFFFFFF
+    private inline fun prune(a: Long) = a and 0xFFFFFF
 
     @JvmStatic
     private fun part2(input: List<String>): Int {
