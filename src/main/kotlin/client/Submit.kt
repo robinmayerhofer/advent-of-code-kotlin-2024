@@ -71,7 +71,11 @@ object Submit {
         val submissions = getSubmissionsUntilNow(day, year, part)
 
         if (submissions.any { it.result == CORRECT }) {
-            println("Already submitted a correct solution, skipping.")
+            val submittedCorrectValue = submissions.first { it.result == CORRECT }
+            check(submittedCorrectValue.value == value) {
+                "Already submitted a correct solution, but with a different value: ${submittedCorrectValue.value}, tried to submit: $value"
+            }
+            println("Already submitted this solution as the correct solution, skipping.")
             return
         }
         submissions.forEach {
