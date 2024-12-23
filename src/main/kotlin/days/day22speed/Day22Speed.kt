@@ -18,7 +18,7 @@ object Day22Speed {
     private fun mix(a: Long, b: Long) = a xor b
 
     @JvmStatic
-    private fun prune(a: Long) = a % 16777216
+    private fun prune(a: Long) = a and 0xFFFFFF
 
     @JvmStatic
     private fun part2(input: List<String>): Int {
