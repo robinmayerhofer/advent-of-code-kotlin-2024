@@ -22,9 +22,8 @@ object Day22Speed {
 
     @JvmStatic
     private fun part2(input: List<String>): Int {
-        val size = input.size
-        val numberss = IntArray(size * 2001)
-        val diffs = IntArray(size * 2000)
+        val numberss = IntArray(2001)
+        val diffs = IntArray(2000)
 
         val final = IntArray(130321)
         var ans = Int.MIN_VALUE
@@ -36,20 +35,20 @@ object Day22Speed {
             val initial = input[i].toLong()
             var current = initial
             for (j in 0 until 2001) {
-                numberss[i * 2001 + j] = (current % 10).toInt()
+                numberss[j] = (current % 10).toInt()
                 current = current.next()
                 if (j >= 1) {
-                    diffs[i * 2000 + j - 1] = numberss[i * 2001 + j] - numberss[i * 2001 + j - 1]
+                    diffs[j - 1] = numberss[j] - numberss[j - 1]
                 }
             }
 
             for (j in 1996 downTo 0) {
-                val diff1 = diffs[i * 2000 + j] + 9
-                val diff2 = diffs[i * 2000 + j + 1] + 9
-                val diff3 = diffs[i * 2000 + j + 2] + 9
-                val diff4 = diffs[i * 2000 + j + 3] + 9
+                val diff1 = diffs[j] + 9
+                val diff2 = diffs[j + 1] + 9
+                val diff3 = diffs[j + 2] + 9
+                val diff4 = diffs[j + 3] + 9
                 val index = diff1 * 6859 + diff2 * 361 + diff3 * 19 + diff4
-                cur[index] = numberss[i * 2001 + j + 4]
+                cur[index] = numberss[j + 4]
                 indices[j] = index
             }
 
