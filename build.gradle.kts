@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.allopen") version "2.0.20"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.12"
-//    id("org.graalvm.buildtools.native") version "0.10.3"
+    id("org.graalvm.buildtools.native") version "0.10.3"
 }
 
 dependencies {
@@ -55,7 +55,7 @@ tasks {
         dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources")) // We need this for Gradle optimization to work
         archiveClassifier.set("standalone") // Naming the jar
         manifest {
-            attributes("Main-Class" to "days.day16speed.Day16Speed")
+            attributes("Main-Class" to "days.day22speed.Day22Speed")
         }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val sourcesMain = sourceSets.main.get()
@@ -70,15 +70,15 @@ tasks {
 }
 
 // build with ./gradlew nativeCompile (first set jenv version to the Graal VM)
-//kotlin {
-//    jvmToolchain(21)
-//}
-//
-//graalvmNative {
-//    toolchainDetection.set(true)
-//    binaries {
-//        named("main") {
-//            mainClass.set("days.day16speed.Day16Speed")
-//        }
-//    }
-//}
+kotlin {
+    jvmToolchain(21)
+}
+
+graalvmNative {
+    toolchainDetection.set(true)
+    binaries {
+        named("main") {
+            mainClass.set("days.day22speed.Day22Speed")
+        }
+    }
+}
