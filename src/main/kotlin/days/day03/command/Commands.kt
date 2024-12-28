@@ -1,6 +1,6 @@
-package command
+package days.day03.command
 
-import command.Command.*
+import days.day03.command.Command.*
 import utils.findAllNumbers
 import utils.shouldLog
 import kotlin.reflect.KClass

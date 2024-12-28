@@ -1,7 +1,7 @@
 package days.day03
 
-import command.CommandFactory
-import command.CommandInterpreter
+import days.day03.command.CommandFactory
+import days.day03.command.CommandInterpreter
 import utils.*
 
 
