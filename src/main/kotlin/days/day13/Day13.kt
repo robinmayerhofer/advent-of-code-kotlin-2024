@@ -13,7 +13,7 @@ fun main() {
     fun cheapestCost(ax: Long, ay: Long, bx: Long, by: Long, px: Long, py: Long): Long? {
         // This does not solve the optimization problem but only works if
         // there is only at most one valid solution to the problem (i.e., the task is not an optimization problem).
-        // In the input, this is ensured by ax/ay or bx/by have at least one prime that is different.
+        // In the input, this is ensured by ax/ay or bx/by having at least one prime that is different.
         // This can be checked by prime factoring the input and comparing sets.
         // i.e., this condition holds for all inputs:
         // (primeFactors(ax).toSet() - primeFactor(bx).toSet()).isNotEmpty ||
