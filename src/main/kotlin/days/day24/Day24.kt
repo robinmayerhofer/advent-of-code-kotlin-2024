@@ -23,8 +23,6 @@ data class Gate(
 
 data class Wire(val name: String, val value: Boolean)
 
-// extract, "rmj, khc" "OR", "cqp" out of "rmj OR khc -> cqp"
-// with a regex
 val regex = """(\w+) (\w+) (\w+) -> (\w+)""".toRegex()
 
 fun main() {
@@ -33,24 +31,30 @@ fun main() {
     val year = Year(2024)
     downloadInput(day, year)
 
-    fun part1(input: List<String>): Long {
+    fun parseInput(input: List<String>): Pair<List<Wire>, MutableList<Gate>> {
         val wires = input.takeWhile { it.isNotBlank() }
             .map { line ->
                 val (lhs, rhs) = line.split(":").map { it.trim() }
                 Wire(name = lhs, value = rhs.toInt() == 1)
             }
 
-        val connections: MutableList<Gate> = input.drop(wires.size + 1).map {
+        val gates: MutableList<Gate> = input.drop(wires.size + 1).map {
             val (input1, operation, input2, output) = regex.find(it)!!.destructured
             Gate(output = output, input1 = input1, input2 = input2, operation = operation)
         }.toMutableList()
 
+        return wires to gates
+    }
+
+    fun part1(input: List<String>): Long {
+        val (wires, gates) = parseInput(input)
+
         val known: MutableMap<String, Boolean> = mutableMapOf()
         known.putAll(wires.associate { it.name to it.value })
 
-        while (connections.isNotEmpty()) {
+        while (gates.isNotEmpty()) {
             val toRemove = mutableListOf<Gate>()
-            for (connection in connections) {
+            for (connection in gates) {
                 val input1 = known[connection.input1]
                 val input2 = known[connection.input2]
                 if (input1 != null && input2 != null) {
@@ -64,7 +68,7 @@ fun main() {
                     toRemove.add(connection)
                 }
             }
-            connections.removeAll(toRemove)
+            gates.removeAll(toRemove)
         }
 
         return known
@@ -76,18 +80,33 @@ fun main() {
             .toLong(radix = 2)
     }
 
-    fun part2(input: List<String>): String {
-        val wires = input
-            .takeWhile { it.isNotBlank() }
-            .associate { line ->
-                val (lhs, rhs) = line.split(":").map { it.trim() }
-                lhs to (rhs.toInt() == 1)
-            }
+    fun generateGraphViz(wires: List<Wire>, gates: List<Gate>): String {
+        val nodes = mutableListOf<String>()
+        val edges = mutableListOf<String>()
 
-        val gates: MutableList<Gate> = input.drop(wires.size + 1).map {
-            val (input1, operation, input2, output) = regex.find(it)!!.destructured
-            Gate(output = output, input1 = input1, input2 = input2, operation = operation)
-        }.toMutableList()
+        wires.forEach { wire ->
+            nodes.add("\"${wire.name}\" [label=\"${wire.name}\\n${wire.value}\"];")
+        }
+
+        gates.forEach { gate ->
+            val operationNode = "${gate.input1}_${gate.operation}_${gate.input2}"
+            nodes.add("\"$operationNode\" [label=\"${gate.operation}\"];")
+            edges.add("\"${gate.input1}\" -> \"$operationNode\";")
+            edges.add("\"${gate.input2}\" -> \"$operationNode\";")
+            edges.add("\"$operationNode\" -> \"${gate.output}\";")
+        }
+
+        return buildString {
+            append("digraph G {\n")
+            nodes.forEach { append("    $it\n") }
+            edges.forEach { append("    $it\n") }
+            append("}")
+        }
+    }
+
+    fun part2(input: List<String>): String {
+        val (wires, gates) = parseInput(input)
+        generateGraphViz(wires, gates).println()
 
         // First adder is a HALF ADDER
         // xor0: A XOR B  ->  OUT
